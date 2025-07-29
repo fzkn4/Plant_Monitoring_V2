@@ -6,10 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.plantmonitoring_v2.screens.DashboardScreen
 import com.example.plantmonitoring_v2.screens.LoginScreen
+import com.example.plantmonitoring_v2.screens.PlantListScreen
+import com.example.plantmonitoring_v2.screens.OnFieldScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Dashboard : Screen("dashboard")
+    object PlantList : Screen("plant_list")
+    object OnField : Screen("on_field")
 }
 
 @Composable
@@ -34,6 +38,28 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Dashboard.route) { inclusive = true }
                     }
+                },
+                onPlantListClick = {
+                    navController.navigate(Screen.PlantList.route)
+                },
+                onOnFieldClick = {
+                    navController.navigate(Screen.OnField.route)
+                }
+            )
+        }
+        
+        composable(Screen.PlantList.route) {
+            PlantListScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        
+        composable(Screen.OnField.route) {
+            OnFieldScreen(
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }
