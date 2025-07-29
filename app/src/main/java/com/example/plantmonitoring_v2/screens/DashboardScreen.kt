@@ -13,6 +13,13 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.LocalFlorist
+import androidx.compose.material.icons.filled.Agriculture
+import androidx.compose.material.icons.filled.DeviceHub
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -47,7 +54,7 @@ fun IconCard(
             .fillMaxWidth()
             .height(120.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = Color(0xFFF2F2F2)
         ),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
         onClick = onClick
@@ -89,7 +96,7 @@ fun MetricCard(
             .fillMaxWidth()
             .height(120.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = Color(0xFFF2F2F2)
         ),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
         onClick = onClick
@@ -130,18 +137,20 @@ fun MetricCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onPlantListClick: () -> Unit = {},
+    onOnFieldClick: () -> Unit = {}
 ) {
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
     val menuItems = listOf(
-        MenuItem("Growth Monitoring", Icons.Default.Star),
+        MenuItem("Growth Monitoring", Icons.Default.LocalFlorist),
         MenuItem("Plant Category", Icons.Default.List),
-        MenuItem("Setup Garden & Device", Icons.Default.Home),
-        MenuItem("Device Status", Icons.Default.Phone),
-        MenuItem("Device Control", Icons.Default.Settings)
+        MenuItem("Setup Garden & Device", Icons.Default.Agriculture),
+        MenuItem("Device Status", Icons.Default.DeviceHub),
+        MenuItem("Device Control", Icons.Default.Tune)
     )
 
     ModalNavigationDrawer(
@@ -239,9 +248,7 @@ fun DashboardScreen(
                         IconCard(
                             imageRes = R.drawable.plant_list,
                             text = "My Plant List",
-                            onClick = {
-                                // Handle click for My Plant List
-                            },
+                            onClick = onPlantListClick,
                             modifier = Modifier.weight(1f)
                         )
                         
@@ -250,9 +257,7 @@ fun DashboardScreen(
                         IconCard(
                             imageRes = R.drawable.plant_field,
                             text = "On Field",
-                            onClick = {
-                                // Handle click for Plant Field
-                            },
+                            onClick = onOnFieldClick,
                             modifier = Modifier.weight(1f)
                         )
                         
@@ -278,7 +283,7 @@ fun DashboardScreen(
                     ) {
                         MetricCard(
                             value = "32°",
-                            icon = Icons.Default.List,
+                            icon = Icons.Default.Thermostat,
                             label = "Temperature",
                             onClick = {
                                 // Handle click for Temperature
@@ -290,7 +295,7 @@ fun DashboardScreen(
                         
                         MetricCard(
                             value = "65%",
-                            icon = Icons.Default.Home,
+                            icon = Icons.Default.WaterDrop,
                             label = "Humidity",
                             onClick = {
                                 // Handle click for Humidity
@@ -302,7 +307,7 @@ fun DashboardScreen(
                         
                         MetricCard(
                             value = "Sunny",
-                            icon = Icons.Default.Phone,
+                            icon = Icons.Default.WbSunny,
                             label = "Weather",
                             onClick = {
                                 // Handle click for Weather
@@ -319,7 +324,7 @@ fun DashboardScreen(
                             .height(240.dp)
                             .padding(top = 8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            containerColor = Color(0xFFF2F2F2)
                         ),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
                     ) {
@@ -508,7 +513,7 @@ fun DashboardScreen(
                             .height(80.dp)
                             .padding(top = 8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            containerColor = Color(0xFFF2F2F2)
                         ),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
                     ) {
