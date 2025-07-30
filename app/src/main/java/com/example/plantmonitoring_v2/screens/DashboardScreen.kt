@@ -374,7 +374,9 @@ fun DashboardScreen(
                                         )
                                         Text(
                                             text = "15",
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.headlineMedium,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFF00B050)
                                         )
                                     }
                                     
@@ -401,7 +403,9 @@ fun DashboardScreen(
                                         }
                                         Text(
                                             text = "8",
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFFFF6B6B)
                                         )
                                     }
                                     
@@ -428,7 +432,9 @@ fun DashboardScreen(
                                         }
                                         Text(
                                             text = "2",
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFF4ECDC4)
                                         )
                                     }
                                     
@@ -455,7 +461,9 @@ fun DashboardScreen(
                                         }
                                         Text(
                                             text = "5",
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFF45B7D1)
                                         )
                                     }
                                 }
@@ -471,15 +479,19 @@ fun DashboardScreen(
                                     )
                                     Text(
                                         text = "45",
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                        color = Color(0xFF00B050)
                                     )
                                     Text(
                                         text = " / ",
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = MaterialTheme.typography.titleMedium
                                     )
                                     Text(
                                         text = "30",
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                        color = Color(0xFFFF6B6B)
                                     )
                                     Text(
                                         text = " remaining",
@@ -498,7 +510,9 @@ fun DashboardScreen(
                                     )
                                     Text(
                                         text = "2.5L",
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                        color = Color(0xFF4ECDC4)
                                     )
                                 }
                             }
