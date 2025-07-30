@@ -44,7 +44,8 @@ data class WateringSchedule(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnFieldScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onPlantClick: (ScheduledTask) -> Unit
 ) {
     // Current time state
     var currentTime by remember { mutableStateOf("") }
@@ -467,7 +468,10 @@ fun OnFieldScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(scheduledTasks) { task ->
-                        ScheduledTaskCard(task = task)
+                        ScheduledTaskCard(
+                            task = task,
+                            onClick = { onPlantClick(task) }
+                        )
                     }
                 }
             }
@@ -479,6 +483,7 @@ fun OnFieldScreen(
 @Composable
 fun ScheduledTaskCard(
     task: ScheduledTask,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -487,7 +492,7 @@ fun ScheduledTaskCard(
             containerColor = Color(0xFFF2F2F2)
         ),
         shape = RoundedCornerShape(16.dp),
-        onClick = { /* Handle task click */ }
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
