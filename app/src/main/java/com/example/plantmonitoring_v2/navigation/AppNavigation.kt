@@ -11,6 +11,7 @@ import com.example.plantmonitoring_v2.screens.LoginScreen
 import com.example.plantmonitoring_v2.screens.PlantListScreen
 import com.example.plantmonitoring_v2.screens.OnFieldScreen
 import com.example.plantmonitoring_v2.screens.PlantDetailScreen
+import com.example.plantmonitoring_v2.screens.PlantCategoryScreen
 import com.example.plantmonitoring_v2.screens.ScheduledTask
 import com.example.plantmonitoring_v2.screens.WateringSchedule
 
@@ -20,6 +21,7 @@ sealed class Screen(val route: String) {
     object PlantList : Screen("plant_list")
     object OnField : Screen("on_field")
     object PlantDetail : Screen("plant_detail/{plantName}/{plantId}/{days}/{waterPerDay}/{wateringSchedules}")
+    object PlantCategory : Screen("plant_category")
 }
 
 @Composable
@@ -50,6 +52,9 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onOnFieldClick = {
                     navController.navigate(Screen.OnField.route)
+                },
+                onPlantCategoryClick = {
+                    navController.navigate(Screen.PlantCategory.route)
                 }
             )
         }
@@ -58,6 +63,19 @@ fun AppNavigation(navController: NavHostController) {
             PlantListScreen(
                 onBackClick = {
                     navController.popBackStack()
+                }
+            )
+        }
+        
+        composable(Screen.PlantCategory.route) {
+            PlantCategoryScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onGrowthMonitoringClick = {
+                    navController.navigate(Screen.Dashboard.route) {
+                        popUpTo(Screen.PlantCategory.route) { inclusive = true }
+                    }
                 }
             )
         }
