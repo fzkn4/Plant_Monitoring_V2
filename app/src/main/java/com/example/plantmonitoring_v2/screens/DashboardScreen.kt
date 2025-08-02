@@ -34,13 +34,6 @@ import androidx.compose.foundation.background
 import kotlinx.coroutines.launch
 import com.example.plantmonitoring_v2.R
 
-
-
-data class MenuItem(
-    val title: String,
-    val icon: ImageVector
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconCard(
@@ -139,7 +132,8 @@ fun MetricCard(
 fun DashboardScreen(
     onLogout: () -> Unit,
     onPlantListClick: () -> Unit = {},
-    onOnFieldClick: () -> Unit = {}
+    onOnFieldClick: () -> Unit = {},
+    onPlantCategoryClick: () -> Unit = {}
 ) {
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -165,7 +159,7 @@ fun DashboardScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 
-                menuItems.forEach { item ->
+                menuItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         icon = { Icon(item.icon, contentDescription = null) },
                         label = { Text(item.title) },
@@ -173,6 +167,12 @@ fun DashboardScreen(
                         onClick = {
                             scope.launch {
                                 drawerState.close()
+                            }
+                            // Handle specific menu item clicks
+                            when (index) {
+                                0 -> onPlantCategoryClick() // Growth Monitoring
+                                1 -> onPlantCategoryClick() // Plant Category
+                                // Add other menu items as needed
                             }
                         },
                         modifier = Modifier.padding(horizontal = 12.dp)
