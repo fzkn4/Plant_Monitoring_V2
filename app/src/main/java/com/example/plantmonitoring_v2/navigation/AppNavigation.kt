@@ -12,8 +12,12 @@ import com.example.plantmonitoring_v2.screens.PlantListScreen
 import com.example.plantmonitoring_v2.screens.OnFieldScreen
 import com.example.plantmonitoring_v2.screens.PlantDetailScreen
 import com.example.plantmonitoring_v2.screens.PlantCategoryScreen
+import com.example.plantmonitoring_v2.screens.PlantCategoryListScreen
+import com.example.plantmonitoring_v2.screens.PlantPreferencePresetScreen
+import com.example.plantmonitoring_v2.screens.AddCustomPlantScreen
 import com.example.plantmonitoring_v2.screens.ScheduledTask
 import com.example.plantmonitoring_v2.screens.WateringSchedule
+import com.example.plantmonitoring_v2.screens.PlantItem
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -22,6 +26,9 @@ sealed class Screen(val route: String) {
     object OnField : Screen("on_field")
     object PlantDetail : Screen("plant_detail/{plantName}/{plantId}/{days}/{waterPerDay}/{wateringSchedules}")
     object PlantCategory : Screen("plant_category")
+    object PlantCategoryList : Screen("plant_category_list/{categoryName}")
+    object PlantPreferencePreset : Screen("plant_preference_preset/{plantName}/{plantSpecies}/{plantStatus}/{plantWaterAmount}")
+    object AddCustomPlant : Screen("add_custom_plant")
 }
 
 @Composable
@@ -76,6 +83,36 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate(Screen.Dashboard.route) {
                         popUpTo(Screen.PlantCategory.route) { inclusive = true }
                     }
+                },
+                                 onCategoryClick = { categoryName ->
+                     navController.navigate(Screen.PlantCategoryList.route.replace("{categoryName}", categoryName))
+                 },
+                 onAddCustomPlantClick = {
+                     navController.navigate(Screen.AddCustomPlant.route)
+                 }
+            )
+        }
+        
+        composable(
+            route = Screen.PlantCategoryList.route,
+            arguments = listOf(
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+            PlantCategoryListScreen(
+                categoryName = categoryName,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onPlantClick = { plant ->
+                    navController.navigate(
+                        Screen.PlantPreferencePreset.route
+                            .replace("{plantName}", plant.name)
+                            .replace("{plantSpecies}", plant.species)
+                            .replace("{plantStatus}", plant.status)
+                            .replace("{plantWaterAmount}", plant.waterAmount)
+                    )
                 }
             )
         }
@@ -139,5 +176,47 @@ fun AppNavigation(navController: NavHostController) {
                 }
             )
         }
-    }
+        
+        composable(
+            route = Screen.PlantPreferencePreset.route,
+            arguments = listOf(
+                navArgument("plantName") { type = NavType.StringType },
+                navArgument("plantSpecies") { type = NavType.StringType },
+                navArgument("plantStatus") { type = NavType.StringType },
+                navArgument("plantWaterAmount") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val plantName = backStackEntry.arguments?.getString("plantName") ?: ""
+            val plantSpecies = backStackEntry.arguments?.getString("plantSpecies") ?: ""
+            val plantStatus = backStackEntry.arguments?.getString("plantStatus") ?: ""
+            val plantWaterAmount = backStackEntry.arguments?.getString("plantWaterAmount") ?: ""
+            
+            val plant = PlantItem(
+                name = plantName,
+                species = plantSpecies,
+                status = plantStatus,
+                waterAmount = plantWaterAmount
+            )
+            
+            PlantPreferencePresetScreen(
+                plant = plant,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+                         )
+         }
+         
+         composable(Screen.AddCustomPlant.route) {
+             AddCustomPlantScreen(
+                 onBackClick = {
+                     navController.popBackStack()
+                 },
+                 onSavePlant = { plant ->
+                     // Here you would typically save the plant to your data source
+                     // For now, we'll just navigate back
+                     navController.popBackStack()
+                 }
+             )
+         }
+     }
 } 
