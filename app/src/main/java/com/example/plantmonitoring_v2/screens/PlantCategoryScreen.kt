@@ -50,7 +50,9 @@ import com.example.plantmonitoring_v2.R
 @Composable
 fun PlantCategoryScreen(
     onBackClick: () -> Unit,
-    onGrowthMonitoringClick: () -> Unit = {}
+    onGrowthMonitoringClick: () -> Unit = {},
+    onCategoryClick: (String) -> Unit = {},
+    onAddCustomPlantClick: () -> Unit = {}
 ) {
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -174,168 +176,99 @@ fun PlantCategoryScreen(
                 }
                 
                 item {
-                    var plantCategories by remember { mutableStateOf(listOf("Fruits", "Vegies", "Herbs")) }
-                    var customPlantName by remember { mutableStateOf("") }
-                    var showAddDialog by remember { mutableStateOf(false) }
+                    val plantCategories = listOf("Fruits", "Vegies", "Herbs")
                     
                     Column {
-                        // Two-row horizontally scrollable cards
-                        LazyRow(
+                        // Fixed 2x2 grid of plant category cards (last card is 'Custom Add')
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(horizontal = 0.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(280.dp) // Fixed height for 2 rows
                         ) {
-                            // Create multiple grid items for horizontal scrolling
-                            val totalCards = plantCategories.size + 1 // +1 for Add Custom
-                            val cardsPerGrid = 4 // 2x2 grid
-                            val numberOfGrids = (totalCards + cardsPerGrid - 1) / cardsPerGrid // Ceiling division
-                            
-                            repeat(numberOfGrids) { gridIndex ->
-                                item {
-                                    LazyVerticalGrid(
-                                        columns = GridCells.Fixed(2),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                                        modifier = Modifier
-                                            .width(400.dp) // Fixed width for grid
-                                            .height(280.dp) // Fixed height for 2 rows
+                            items(4) { index ->
+                                if (index < plantCategories.size) {
+                                    Card(
+                                        modifier = Modifier.size(120.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                        onClick = { onCategoryClick(plantCategories[index]) }
                                     ) {
-                                        val startIndex = gridIndex * cardsPerGrid
-                                        val endIndex = minOf(startIndex + cardsPerGrid, totalCards)
-                                        
-                                        for (i in startIndex until endIndex) {
-                                            if (i < plantCategories.size) {
-                                                // Plant category card
-                                                item {
-                                                    Card(
-                                                        modifier = Modifier
-                                                            .size(120.dp),
-                                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                                                        onClick = { /* Handle category click */ }
-                                                    ) {
-                                                        Column(
-                                                            modifier = Modifier
-                                                                .fillMaxSize()
-                                                                .padding(16.dp),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.Center
-                                                        ) {
-                                                            // Placeholder for plant image
-                                                            Box(
-                                                                modifier = Modifier
-                                                                    .size(48.dp)
-                                                                    .background(
-                                                                        color = Color(0xFFE8F5E8),
-                                                                        shape = CircleShape
-                                                                    ),
-                                                                contentAlignment = Alignment.Center
-                                                            ) {
-                                                                Icon(
-                                                                    imageVector = Icons.Default.LocalFlorist,
-                                                                    contentDescription = null,
-                                                                    tint = Color(0xFF4CAF50),
-                                                                    modifier = Modifier.size(24.dp)
-                                                                )
-                                                            }
-                                                            
-                                                            Spacer(modifier = Modifier.height(8.dp))
-                                                            
-                                                            Text(
-                                                                text = plantCategories[i],
-                                                                style = MaterialTheme.typography.bodyMedium,
-                                                                textAlign = TextAlign.Center
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                // Add Custom card (always at the end)
-                                                item {
-                                                    Card(
-                                                        modifier = Modifier
-                                                            .size(120.dp),
-                                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                                                        onClick = { showAddDialog = true }
-                                                    ) {
-                                                        Column(
-                                                            modifier = Modifier
-                                                                .fillMaxSize()
-                                                                .padding(16.dp),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.Center
-                                                        ) {
-                                                            // Add icon
-                                                            Box(
-                                                                modifier = Modifier
-                                                                    .size(48.dp)
-                                                                    .background(
-                                                                        color = Color(0xFFF0F0F0),
-                                                                        shape = CircleShape
-                                                                    ),
-                                                                contentAlignment = Alignment.Center
-                                                            ) {
-                                                                Icon(
-                                                                    imageVector = Icons.Default.Add,
-                                                                    contentDescription = null,
-                                                                    tint = Color(0xFF666666),
-                                                                    modifier = Modifier.size(24.dp)
-                                                                )
-                                                            }
-                                                            
-                                                            Spacer(modifier = Modifier.height(8.dp))
-                                                            
-                                                            Text(
-                                                                text = "Add Custom",
-                                                                style = MaterialTheme.typography.bodyMedium,
-                                                                textAlign = TextAlign.Center
-                                                            )
-                                                        }
-                                                    }
-                                                }
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(16.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            // Placeholder for plant image
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(48.dp)
+                                                    .background(
+                                                        color = Color(0xFFE8F5E8),
+                                                        shape = CircleShape
+                                                    ),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.LocalFlorist,
+                                                    contentDescription = null,
+                                                    tint = Color(0xFF4CAF50),
+                                                    modifier = Modifier.size(24.dp)
+                                                )
                                             }
+                                            
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            
+                                            Text(
+                                                text = plantCategories[index],
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    // Last card: Custom Add
+                                    Card(
+                                        modifier = Modifier.size(120.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                                        onClick = { onAddCustomPlantClick() }
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(16.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(48.dp)
+                                                    .background(
+                                                        color = Color(0xFFF0F0F0),
+                                                        shape = CircleShape
+                                                    ),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Add,
+                                                    contentDescription = null,
+                                                    tint = Color(0xFF666666),
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                            }
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Text(
+                                                text = "Custom Add",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                textAlign = TextAlign.Center
+                                            )
                                         }
                                     }
                                 }
                             }
-                        }
-                        
-                        // Add Custom Plant Dialog
-                        if (showAddDialog) {
-                            AlertDialog(
-                                onDismissRequest = { showAddDialog = false },
-                                title = { Text("Add Custom Plant Category") },
-                                text = {
-                                    TextField(
-                                        value = customPlantName,
-                                        onValueChange = { customPlantName = it },
-                                        label = { Text("Plant Category Name") },
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                },
-                                confirmButton = {
-                                    TextButton(
-                                        onClick = {
-                                            if (customPlantName.isNotBlank()) {
-                                                plantCategories = plantCategories + customPlantName
-                                                customPlantName = ""
-                                                showAddDialog = false
-                                            }
-                                        }
-                                    ) {
-                                        Text("Add")
-                                    }
-                                },
-                                dismissButton = {
-                                    TextButton(
-                                        onClick = {
-                                            customPlantName = ""
-                                            showAddDialog = false
-                                        }
-                                    ) {
-                                        Text("Cancel")
-                                    }
-                                }
-                            )
                         }
                     }
                 }
