@@ -177,9 +177,9 @@ fun AddCustomPlantScreen(
                             contentDescription = "Plant Image",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(120.dp)
+                                .heightIn(min = 120.dp, max = 200.dp)
                                 .clip(RoundedCornerShape(12.dp)),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Fit
                         )
                         
                         Spacer(modifier = Modifier.height(16.dp))
@@ -215,44 +215,50 @@ fun AddCustomPlantScreen(
                             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = plantCategory,
-                            onValueChange = { plantCategory = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Fruits, Vegies, or Herbs", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
-                        )
                         
-                        Spacer(modifier = Modifier.height(12.dp))
+                        var expanded by remember { mutableStateOf(false) }
+                        val categories = listOf("Fruits", "Vegetables", "Herbs")
                         
-                        // Plant Status
-                        Text(
-                            text = "Status",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = plantStatus,
-                            onValueChange = { plantStatus = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Growing, Flowering, etc.", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            OutlinedTextField(
+                                value = plantCategory,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor(),
+                                placeholder = { Text("Select a category", color = Color.LightGray) },
+                                shape = RoundedCornerShape(20.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color(0xFF4CAF50),
+                                    unfocusedBorderColor = Color(0xFF4CAF50),
+                                    focusedContainerColor = Color(0xFFFFF8F9),
+                                    unfocusedContainerColor = Color(0xFFFFF8F9)
+                                )
                             )
-                        )
+                            
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                                modifier = Modifier.background(Color(0xFFFFF8F9))
+                            ) {
+                                categories.forEach { category ->
+                                    DropdownMenuItem(
+                                        text = { Text(category) },
+                                        onClick = {
+                                            plantCategory = category
+                                            expanded = false
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
                         
                         Spacer(modifier = Modifier.height(12.dp))
                         
@@ -354,6 +360,7 @@ fun AddCustomPlantScreen(
                                 onValueChange = { wateringVolume = it },
                                 valueRange = 0.5f..5.0f,
                                 steps = 45,
+                                modifier = Modifier.height(24.dp),
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color(0xFF38C070),
                                     activeTrackColor = Color(0xFF38C070),
@@ -415,6 +422,7 @@ fun AddCustomPlantScreen(
                                 onValueChange = { emergencyVolume = it },
                                 valueRange = 0.1f..2.0f,
                                 steps = 19,
+                                modifier = Modifier.height(24.dp),
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color(0xFFFF6B35),
                                     activeTrackColor = Color(0xFFFF6B35),
@@ -503,6 +511,7 @@ fun AddCustomPlantScreen(
                                 },
                                 valueRange = 10f..35f,
                                 steps = 25,
+                                modifier = Modifier.height(24.dp),
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color(0xFF4CAF50),
                                     activeTrackColor = Color(0xFF4CAF50),
@@ -545,6 +554,7 @@ fun AddCustomPlantScreen(
                                 },
                                 valueRange = (tempMin + 1f)..40f,
                                 steps = (40 - (tempMin + 1f)).toInt(),
+                                modifier = Modifier.height(24.dp),
                                 colors = SliderDefaults.colors(
                                     thumbColor = Color(0xFF4CAF50),
                                     activeTrackColor = Color(0xFF4CAF50),
@@ -589,6 +599,7 @@ fun AddCustomPlantScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
                                 OutlinedTextField(
                                     value = humidityMin,
                                     onValueChange = { humidityMin = it },
@@ -610,6 +621,7 @@ fun AddCustomPlantScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
                                 OutlinedTextField(
                                     value = humidityMax,
                                     onValueChange = { humidityMax = it },
@@ -632,7 +644,7 @@ fun AddCustomPlantScreen(
                         // Light Requirements
                         Text(
                             text = "Light Requirements",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -655,7 +667,7 @@ fun AddCustomPlantScreen(
                         
                         Text(
                             text = "Hours of Sunlight",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -714,34 +726,10 @@ fun AddCustomPlantScreen(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // Watering Frequency
-                        Text(
-                            text = "Watering Frequency",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = wateringFrequency,
-                            onValueChange = { wateringFrequency = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Twice daily", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
-                        )
-                        
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
                         // Watering Schedules
                         Text(
                             text = "Watering Schedules",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                         )
                         
@@ -924,30 +912,6 @@ fun AddCustomPlantScreen(
                             onValueChange = { harvestTime = it },
                             modifier = Modifier.fillMaxWidth(),
                             placeholder = { Text("60-90", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
-                        )
-                        
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
-                        // Expected Yield
-                        Text(
-                            text = "Expected Yield",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = expectedYield,
-                            onValueChange = { expectedYield = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("200-300g", color = Color.LightGray) },
                             singleLine = true,
                             shape = RoundedCornerShape(20.dp),
                             colors = OutlinedTextFieldDefaults.colors(

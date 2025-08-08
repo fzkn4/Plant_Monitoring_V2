@@ -30,6 +30,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.plantmonitoring_v2.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -298,4 +299,4 @@ data class PlantItem(
     val species: String,
     val status: String,
     val waterAmount: String
-) 
+    )
