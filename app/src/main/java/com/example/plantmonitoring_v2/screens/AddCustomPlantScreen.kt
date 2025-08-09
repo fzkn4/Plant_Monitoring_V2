@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,6 +41,48 @@ import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import com.example.plantmonitoring_v2.R
 import com.example.plantmonitoring_v2.ui.theme.headlineRegular
+
+@Composable
+fun NumberInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    minValue: Int = 0,
+    maxValue: Int = 999,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedTextField(
+            value = value,
+            onValueChange = { newValue ->
+                if (newValue.isEmpty() || newValue.toIntOrNull() != null) {
+                    val intValue = newValue.toIntOrNull() ?: 0
+                    if (intValue >= minValue && intValue <= maxValue) {
+                        onValueChange(newValue)
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(placeholder, color = Color.LightGray) },
+            singleLine = true,
+            shape = RoundedCornerShape(20.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF4CAF50),
+                unfocusedBorderColor = Color(0xFF4CAF50),
+                focusedContainerColor = Color(0xFFFFF8F9),
+                unfocusedContainerColor = Color(0xFFFFF8F9)
+            )
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -259,30 +303,6 @@ fun AddCustomPlantScreen(
                                 }
                             }
                         }
-                        
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
-                        // Water Amount
-                        Text(
-                            text = "Water Amount",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = waterAmount,
-                            onValueChange = { waterAmount = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("150ml", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
-                        )
                     }
                 }
             }
@@ -589,79 +609,139 @@ fun AddCustomPlantScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         
                         // Humidity Range
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Min Humidity (%)",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                OutlinedTextField(
-                                    value = humidityMin,
-                                    onValueChange = { humidityMin = it },
+                            // Min Humidity Control
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    placeholder = { Text("50", color = Color.LightGray) },
-                                    singleLine = true,
-                                    shape = RoundedCornerShape(20.dp),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Color(0xFF4CAF50),
-                                        unfocusedBorderColor = Color(0xFF4CAF50),
-                                        focusedContainerColor = Color(0xFFFFF8F9),
-                                        unfocusedContainerColor = Color(0xFFFFF8F9)
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            text = "Minimum Humidity",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "Lowest acceptable humidity level",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Thermostat,
+                                            contentDescription = "Humidity",
+                                            tint = Color(0xFF4CAF50),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Text(
+                                            text = "${humidityMin}%",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFF4CAF50)
+                                        )
+                                    }
+                                }
+                                
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                Slider(
+                                    value = humidityMin.toFloat(),
+                                    onValueChange = { 
+                                        humidityMin = it.toInt().toString()
+                                        if (humidityMin.toInt() > humidityMax.toInt()) {
+                                            humidityMax = (humidityMin.toInt() + 10).toString()
+                                        }
+                                    },
+                                    valueRange = 0f..100f,
+                                    steps = 100,
+                                    modifier = Modifier.height(24.dp),
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = Color(0xFF4CAF50),
+                                        activeTrackColor = Color(0xFF4CAF50),
+                                        inactiveTrackColor = Color(0xFFE0E0E0)
                                     )
                                 )
                             }
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Max Humidity (%)",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                OutlinedTextField(
-                                    value = humidityMax,
-                                    onValueChange = { humidityMax = it },
+                            
+                            Spacer(modifier = Modifier.height(16.dp))
+                            
+                            // Max Humidity Control
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    placeholder = { Text("70", color = Color.LightGray) },
-                                    singleLine = true,
-                                    shape = RoundedCornerShape(20.dp),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = Color(0xFF4CAF50),
-                                        unfocusedBorderColor = Color(0xFF4CAF50),
-                                        focusedContainerColor = Color(0xFFFFF8F9),
-                                        unfocusedContainerColor = Color(0xFFFFF8F9)
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            text = "Maximum Humidity",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "Highest acceptable humidity level",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Thermostat,
+                                            contentDescription = "Humidity",
+                                            tint = Color(0xFF4CAF50),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Text(
+                                            text = "${humidityMax}%",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                            color = Color(0xFF4CAF50)
+                                        )
+                                    }
+                                }
+                                
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                Slider(
+                                    value = humidityMax.toFloat(),
+                                    onValueChange = { 
+                                        humidityMax = it.toInt().toString()
+                                        if (humidityMax.toInt() < humidityMin.toInt()) {
+                                            humidityMin = (humidityMax.toInt() - 10).toString()
+                                        }
+                                    },
+                                    valueRange = (humidityMin.toInt() + 1).toFloat()..100f,
+                                    steps = (100 - (humidityMin.toInt() + 1)),
+                                    modifier = Modifier.height(24.dp),
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = Color(0xFF4CAF50),
+                                        activeTrackColor = Color(0xFF4CAF50),
+                                        inactiveTrackColor = Color(0xFFE0E0E0)
                                     )
                                 )
                             }
                         }
-                        
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
-                        // Light Requirements
-                        Text(
-                            text = "Light Requirements",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = lightRequirement,
-                            onValueChange = { lightRequirement = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Full Sun to Partial Shade", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
-                        )
                         
                         Spacer(modifier = Modifier.height(8.dp))
                         
@@ -877,25 +957,14 @@ fun AddCustomPlantScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         
                         // Growth Duration
-                        Text(
-                            text = "Growth Duration (days)",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
+                        NumberInputField(
                             value = growthDuration,
                             onValueChange = { growthDuration = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("70", color = Color.LightGray) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(20.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF4CAF50),
-                                unfocusedBorderColor = Color(0xFF4CAF50),
-                                focusedContainerColor = Color(0xFFFFF8F9),
-                                unfocusedContainerColor = Color(0xFFFFF8F9)
-                            )
+                            label = "Growth Duration (days)",
+                            placeholder = "70",
+                            minValue = 1,
+                            maxValue = 365,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         
                         Spacer(modifier = Modifier.height(12.dp))
@@ -988,25 +1057,14 @@ fun CustomScheduleDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Amount input
-                Text(
-                    text = "Water Amount (L)",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
+                NumberInputField(
                     value = amount,
                     onValueChange = { amount = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("1.8", color = Color.LightGray) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(20.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4CAF50),
-                        unfocusedBorderColor = Color(0xFF4CAF50),
-                        focusedContainerColor = Color(0xFFFFF8F9),
-                        unfocusedContainerColor = Color(0xFFFFF8F9)
-                    )
+                    label = "Water Amount (L)",
+                    placeholder = "1.8",
+                    minValue = 0,
+                    maxValue = 10,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 
                 Spacer(modifier = Modifier.height(24.dp))
